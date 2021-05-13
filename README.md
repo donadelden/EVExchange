@@ -21,6 +21,7 @@
               :     
      ev2 --- dev2 --- se2
   ```
+  
     - can be useful to insert a malicious switch connected to ev1, dev1, se1 (and the same for 2) to redirect everything from ev1 to dev1?
     - ...or is it better to route everything inside dev1 itself?
   - Ruffly, the communication is composed of:
