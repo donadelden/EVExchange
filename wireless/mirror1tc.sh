@@ -1,5 +1,7 @@
 # Mirroring for sta1
 
+################ ev1
+
 # set up the new interface for the tunnel 
 ip link add vxlan0 type vxlan id 100 local 10.0.20.10 remote 10.0.20.20 dev sta1-wlan0 dstport 4789
 ip link set vxlan0 up
@@ -26,3 +28,4 @@ tc filter add dev vxlan0 parent ffff: \
     protocol all \
     u32 match u8 0 0 \
     action mirred egress mirror dev sta1-eth1
+
