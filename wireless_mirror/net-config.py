@@ -67,6 +67,10 @@ def topology():
 	ap1.cmd('ovs-ofctl add-flow ap1 "priority=0,tcp,in_port=1,'
 			'actions=output:in_port,normal"')
 
+	info("*** Starting mirrors+tunnels\n")
+	sta1.cmd("./mirror1tc.sh")
+	sta2.cmd("./mirror2tc.sh")
+
 	info("*** Running CLI\n")
 	CLI(net)
 
