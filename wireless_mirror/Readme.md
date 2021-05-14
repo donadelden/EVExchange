@@ -7,3 +7,5 @@ The mirrors+tunnels are created directly by default on the `net-config.py` file 
 
  - on `sta1` using `mirror1tc.sh`
  - on `sta2` using `mirror2tc.sh`
+
+ It also uses `qdisc` as a netfilterqueue to "select" certain packet in a certain interface
