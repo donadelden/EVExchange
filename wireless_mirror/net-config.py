@@ -54,7 +54,7 @@ def topology():
 	sta1.cmd('ifconfig sta1-wlan0 10.0.20.10 netmask 255.255.255.0 up')
 	ev1.cmd('route add default gw 10.0.10.10')
 
-	sta2.cmd('ifconfig sta2-wlan0 10.0.20.2 netmask 255.255.255.0 up')
+	sta2.cmd('ifconfig sta2-wlan0 10.0.20.20 netmask 255.255.255.0 up')
 	sta2.cmd('ifconfig sta2-eth1 10.0.30.10 netmask 255.255.255.0 up')
 	se2.cmd('route add default gw 10.0.30.10')
 	
