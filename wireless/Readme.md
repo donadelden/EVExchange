@@ -9,3 +9,7 @@ The mirrors+tunnels are created directly by default on the `net-config.py` file 
  - on `sta2` using `mirror2tc.sh`
 
  It also uses `qdisc` as a netfilterqueue to "select" certain packet in a certain interface
+
+
+### Topology
+![topology](https://github.com/donadelden/EVExchange/blob/main/pics/wifi-topology.png?raw=true)
