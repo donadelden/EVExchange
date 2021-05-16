@@ -8,6 +8,8 @@ from mininet.log import setLogLevel, info
 from mn_wifi.cli import CLI
 from mn_wifi.net import Mininet_wifi
 
+from mn_wifi.v2g import EV, SE
+
 
 def topology():
 	"Create a network."
@@ -23,16 +25,16 @@ def topology():
 	c0 = net.addController('c0')
 
 
-	ev1 = net.addHost( 'ev1', ip='10.1.10.1/24',
+	ev1 = net.addHost( 'ev1', cls=EV, ip='10.1.10.1/24',
 						mac="00:00:00:00:00:11")
 
-	se1 = net.addHost( 'se1', ip='10.1.20.1/24',
+	se1 = net.addHost( 'se1', cls=SE, ip='10.1.20.1/24',
 						mac="00:00:00:00:00:12")	
 
-	ev2 = net.addHost( 'ev2', ip='10.2.10.1/24',
+	ev2 = net.addHost( 'ev2', cls=EV, ip='10.2.10.1/24',
 						mac="00:00:00:00:00:21")
 
-	se2 = net.addHost( 'se2', ip='10.2.20.1/24',
+	se2 = net.addHost( 'se2', cls=SE, ip='10.2.20.1/24',
 						mac="00:00:00:00:00:22")	
 
 	info("*** Configuring wifi nodes\n")
