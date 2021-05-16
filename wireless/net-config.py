@@ -14,11 +14,11 @@ def topology():
 	net = Mininet_wifi()
 
 	info("*** Creating nodes\n")
-	ap_arg = {'client_isolation': True}
-	ap1 = net.addAccessPoint('ap1', ssid="ap1", mode="g",
-							 channel="5",**ap_arg)
-	sta1 = net.addStation('sta1')#, position='10,10,0')
-	sta2 = net.addStation('sta2')#, position='20,20,0')
+	ap_arg = {'client_isolation': True, 'position': '10,10,0'}
+	ap1 = net.addAccessPoint('ap1', ssid="ap1", mode="g", 
+							 channel="5", **ap_arg)
+	sta1 = net.addStation('sta1', position='10,10,0')
+	sta2 = net.addStation('sta2', position='200,10,0')
 
 	c0 = net.addController('c0')
 
