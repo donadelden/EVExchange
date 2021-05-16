@@ -29,3 +29,32 @@ tc filter add dev vxlan0 parent ffff: \
     u32 match u8 0 0 \
     action mirred egress mirror dev sta1-eth1
 
+
+################ se1
+
+# set up the new interface for the tunnel 
+ip link add vxlan1 type vxlan id 100 local 10.0.20.10 remote 10.0.20.20 dev sta1-wlan0 dstport 4790
+ip link set vxlan1 up
+
+# mirror all the ingress traffic of sta1-eth2 to vxlan1
+
+# estabilish qdisc to interfaces
+tc qdisc add dev sta1-eth2 ingress
+
+# create the filter who match all and send to vxlan1
+tc filter add dev sta1-eth2 parent ffff: \
+    protocol all \
+    u32 match u8 0 0 \
+    action mirred egress mirror dev vxlan1
+
+### the way back
+# mirror all the ingress in vxlan1 to sta1-eth2
+
+# estabilish qdisc to interfaces
+tc qdisc add dev vxlan1 ingress
+
+# create the filter who match all and send to sta1-eth2
+tc filter add dev vxlan1 parent ffff: \
+    protocol all \
+    u32 match u8 0 0 \
+    action mirred egress mirror dev sta1-eth2
