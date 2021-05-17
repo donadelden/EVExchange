@@ -58,3 +58,16 @@ tc filter add dev vxlan1 parent ffff: \
     protocol all \
     u32 match u8 0 0 \
     action mirred egress mirror dev sta1-eth2
+
+test=$(bridge link)
+if [[ $test == *e1s1* ]];
+then 
+	# turn down legitimate bridge
+	echo 'Turning down the legitimate bridge...'
+	ip link set e1s1 down
+	ip link set sta1-eth1 nomaster
+	ip link set sta1-eth2 nomaster
+	ip link delete e1s1 type bridge
+fi
+
+echo 'Done, EVExchange setted.'

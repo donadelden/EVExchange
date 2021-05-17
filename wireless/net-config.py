@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-'This example creates a simple network topology with 1 ap1 and 2 stations'
+'EVExchange over wifi'
 
 import sys
 
@@ -10,10 +10,51 @@ from mn_wifi.net import Mininet_wifi
 
 from mn_wifi.v2g import EV, SE
 
+from time import sleep
+
+
+
+class Mininet_wifi_ext(Mininet_wifi):
+
+	attack = True
+
+	def toggle_attack(self):
+		#global self.attack
+		if self.attack: 
+			info("*** EVExchange is active.\n")
+			info("*** Deactivating it...\n")
+			self.stations[0].cmd("./bridge1.sh")
+			self.stations[1].cmd("./bridge2.sh")
+			self.attack = False
+			info("*** EVExchange deactivated.\n")
+		else:
+			info("*** EVExchange is NOT active.\n")
+			info("*** Activating it...\n")
+			self.stations[0].cmd("./mirror1tc.sh")
+			self.stations[1].cmd("./mirror2tc.sh")
+			self.attack = True
+			info("*** EVExchange activated.\n")
+
+	def simple_tests(self):
+
+		self.terms.append(self.hosts[1].startCharge())
+		self.terms.append(self.hosts[3].startCharge())
+
+		sleep(3)
+
+		self.terms.append(self.hosts[0].charge(True))
+
+		sleep(7)
+
+		self.terms.append(self.hosts[2].charge(True))
+
+		sleep(7)
+
+
 
 def topology():
 	"Create a network."
-	net = Mininet_wifi()
+	net = Mininet_wifi_ext()
 
 	info("*** Creating nodes\n")
 	ap_arg = {'client_isolation': True, 'position': '10,10,0'}
@@ -47,17 +88,13 @@ def topology():
 	net.addLink(se1, sta1)
 	net.addLink(ev2, sta2)
 	net.addLink(se2, sta2)
-	#net.addLink(ev1, sta1, intfName2='sta1-eth0', params2={ 'ip' : '10.0.0.110/24'} )
-	#sta1.setMac('00:00:00:00:01:10', 'sta1-eth0')
-	#net.addLink(se2, sta2, intfName2='sta2-eth1', #params2={ 'ip' : '10.0.0.221/24'} )
-	#sta2.setMac('00:00:00:00:02:21', 'sta2-eth1')
 
 	info("*** Starting network\n")
 	net.build()
 	c0.start()
 	ap1.start([c0])
 
-	# 1s sode
+	# 1s side
 	sta1.cmd('ifconfig sta1-wlan0 10.0.20.10 netmask 255.255.255.0 up')
 
 	sta1.cmd('ifconfig sta1-eth1 10.1.10.10 netmask 255.255.255.0 up')
@@ -84,10 +121,16 @@ def topology():
 			'actions=output:in_port,normal"')
 	ap1.cmd('ovs-ofctl add-flow ap1 "priority=0,tcp,in_port=1,'
 			'actions=output:in_port,normal"')
-
-	info("*** Starting mirrors+tunnels\n")
-	sta1.cmd("./mirror1tc.sh")
-	sta2.cmd("./mirror2tc.sh")
+	
+	if net.attack:
+		info("*** Starting mirrors+tunnels (EVExchange activated)\n")
+		sta1.cmd("./mirror1tc.sh")
+		sta2.cmd("./mirror2tc.sh")
+	else:
+		info("** Starting bridges (EVExchange NOT activated")
+		sta1.cmd("./bridge1.sh")
+		sta2.cmd("./bridge2.sh")
+	
 
 	info("*** Running CLI\n")
 	CLI(net)
