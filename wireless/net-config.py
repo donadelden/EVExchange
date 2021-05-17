@@ -40,7 +40,7 @@ class Mininet_wifi_ext(Mininet_wifi):
 		self.terms.append(self.hosts[1].startCharge())
 		self.terms.append(self.hosts[3].startCharge())
 
-		sleep(3)
+		sleep(5)
 
 		self.terms.append(self.hosts[0].charge(True))
 
