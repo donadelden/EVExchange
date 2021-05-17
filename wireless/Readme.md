@@ -4,7 +4,7 @@
 
 By running `net-config.py` you will run MiniV2G (which must be installed!) and create the topology (presented below). *EVExchange* is activated by default.
 
-You can run simples test with `py net.simple_tests()` which will:
+You can run simple tests using `py net.simple_tests()` which will:
 	
 	- spawn two xterms with the two SEs ready to receive charges;
 	- start charging from ev1 in a xterm;
