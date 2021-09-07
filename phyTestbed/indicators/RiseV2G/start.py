@@ -8,6 +8,7 @@ import argparse
 import asyncio
 import atexit
 import time
+import sys
 
 START_COMMAND = b"ChargingStatusRes"  # this is the command that it is used to start the charging
 STOP_COMMAND = b"SessionStopRes"  # this for stopping
@@ -23,7 +24,7 @@ is_charging = False  # global GPIO.setmode(GPIO.BCM)variable for maintain the ch
 def processLine(line, verbose):
     global is_charging
     if verbose:
-        print(line.decode('utf-8'), end="")
+        print(line.decode('utf-8'), end="", flush=True)
 
     # catch start of charging
     if not is_charging and START_COMMAND in line:
@@ -40,7 +41,7 @@ def processLine(line, verbose):
 def processErrorLine(line, verbose):
     global is_charging
     if verbose:
-        print(f"STDERR: {line.decode('utf-8')}", end="")
+        print(f"STDERR: {line.decode('utf-8')}", end="", flush=True)
 
     # if error during charging, stop it
     if is_charging:
@@ -113,7 +114,7 @@ if __name__ == '__main__':
                         help='ev or se based on what you want to start')
     parser.add_argument('--verbose', '-v', dest='verbose', action='store_const',
                         const=True, default=False,
-                        help='Print the log of RIseV2G (default: Falses')
+                        help='Print the log of RiseV2G (default: False')
 
     args = parser.parse_args()
     verbose = args.verbose
