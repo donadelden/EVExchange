@@ -12,30 +12,39 @@ import sys
 
 START_COMMAND = b"ChargingStatusRes"  # this is the command that it is used to start the charging
 STOP_COMMAND = b"SessionStopRes"  # this for stopping
+WAITING_START_COMMAND = b"TCPServer: Waiting for new TCP client connection"
 RASPBERRY = True  # if you are working on a Raspberry you can set this parameters to trigger a LED
 if RASPBERRY:
     import RPi.GPIO as GPIO
-    LED_GPIO_PIN = 26  # set the GPIO number (not the PIN number). See here: https://roboticsbackend.com/wp-content/uploads/2019/05/raspberry-pi-3-pinout.jpg
+    CHARGING_LED_GPIO_PIN = 26  # set the GPIO number (not the PIN number). See here: https://www.theengineeringprojects.com/wp-content/uploads/2021/03/raspberry-pi-4.png
+    WAITING_LED_GPIO_PIN = 19
     GPIO.setmode(GPIO.BCM)
-    GPIO.setup(LED_GPIO_PIN, GPIO.OUT)
+    GPIO.setup(CHARGING_LED_GPIO_PIN, GPIO.OUT)
+    GPIO.setup(WAITING_LED_GPIO_PIN, GPIO.OUT)
 
-is_charging = False  # global GPIO.setmode(GPIO.BCM)variable for maintain the charging status
+device_type = ""  # global variable to get the type of device (ev or se)
+is_charging = False  # global variable for maintain the charging status
 
 def processLine(line, verbose):
     global is_charging
     if verbose:
         print(line.decode('utf-8'), end="", flush=True)
 
+    # catch start of waiting
+    if WAITING_START_COMMAND in line and device_type == "se":
+        print("************* START WAITING **************")
+        if RASPBERRY: GPIO.output(WAITING_LED_GPIO_PIN, GPIO.HIGH)
+
     # catch start of charging
     if not is_charging and START_COMMAND in line:
         is_charging = True
         print("************* START CHARGING **************")
-        if RASPBERRY: GPIO.output(LED_GPIO_PIN, GPIO.HIGH)
+        if RASPBERRY: GPIO.output(CHARGING_LED_GPIO_PIN, GPIO.HIGH)
     # catch stop charging
     elif is_charging and STOP_COMMAND in line:
         is_charging = False
         print("************* STOP CHARGING **************")
-        if RASPBERRY: GPIO.output(LED_GPIO_PIN, GPIO.LOW)
+        if RASPBERRY: GPIO.output(CHARGING_LED_GPIO_PIN, GPIO.LOW)
 
 
 def processErrorLine(line, verbose):
@@ -47,11 +56,11 @@ def processErrorLine(line, verbose):
     if is_charging:
         print("************* ERROR: STOP CHARGING **************")
         if RASPBERRY:  # if error, the led blinks and the stops
-            GPIO.output(LED_GPIO_PIN, GPIO.LOW)
+            GPIO.output(CHARGING_LED_GPIO_PIN, GPIO.LOW)
             time.sleep(1)
-            GPIO.output(LED_GPIO_PIN, GPIO.HIGH)
+            GPIO.output(CHARGING_LED_GPIO_PIN, GPIO.HIGH)
             time.sleep(1)
-            GPIO.output(LED_GPIO_PIN, GPIO.LOW)
+            GPIO.output(CHARGING_LED_GPIO_PIN, GPIO.LOW)
         is_charging = False
 
 
@@ -94,12 +103,14 @@ def exit_handler():
     if is_charging:
         print("************* FORCED EXIT: STOP CHARGING **************")
         if RASPBERRY:  # if error, the led blinks and the stops
-            GPIO.output(LED_GPIO_PIN, GPIO.LOW)
+            GPIO.output(CHARGING_LED_GPIO_PIN, GPIO.LOW)
             time.sleep(1)
-            GPIO.output(LED_GPIO_PIN, GPIO.HIGH)
+            GPIO.output(CHARGING_LED_GPIO_PIN, GPIO.HIGH)
             time.sleep(1)
-            GPIO.output(LED_GPIO_PIN, GPIO.LOW)
+            GPIO.output(CHARGING_LED_GPIO_PIN, GPIO.LOW)
+    if device_type == "se": print("************* STOP WAITING **************")
     if RASPBERRY:  # clean GPIO if rpi is used
+        GPIO.output(WAITING_LED_GPIO_PIN, GPIO.LOW)
         GPIO.cleanup()
 
 
@@ -108,6 +119,7 @@ atexit.register(exit_handler)
 
 
 if __name__ == '__main__':
+    global device_type
 
     parser = argparse.ArgumentParser(description='Wrapper for starting EV or SE.')
     parser.add_argument('type', type=str, choices=["ev", "se"],
@@ -118,8 +130,9 @@ if __name__ == '__main__':
 
     args = parser.parse_args()
     verbose = args.verbose
+    device_type = args.type
 
-    COMMAND = f"java -jar ./rise-v2g-{args.type}cc-1.2.6.jar"
+    COMMAND = f"java -jar ./rise-v2g-{device_type}cc-1.2.6.jar"
 
     execute(
         COMMAND.split(),
