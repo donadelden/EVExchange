@@ -16,11 +16,13 @@ WAITING_START_COMMAND = b"TCPServer: Waiting for new TCP client connection"
 RASPBERRY = True  # if you are working on a Raspberry you can set this parameters to trigger a LED
 if RASPBERRY:
     import RPi.GPIO as GPIO
-    CHARGING_LED_GPIO_PIN = 26  # set the GPIO number (not the PIN number). See here: https://www.theengineeringprojects.com/wp-content/uploads/2021/03/raspberry-pi-4.png
-    WAITING_LED_GPIO_PIN = 19
+    # set the GPIO number (not the PIN number).
+    # See here: https://www.theengineeringprojects.com/wp-content/uploads/2021/03/raspberry-pi-4.png
+    CHARGING_LED_GPIO_PIN = 26  # pin for Yellow (SE) and Green (EV) LEDs
+    SE_READY_LED_GPIO_PIN = 19  # pin for Blue LED on SE
     GPIO.setmode(GPIO.BCM)
     GPIO.setup(CHARGING_LED_GPIO_PIN, GPIO.OUT)
-    GPIO.setup(WAITING_LED_GPIO_PIN, GPIO.OUT)
+    GPIO.setup(SE_READY_LED_GPIO_PIN, GPIO.OUT)
 
 device_type = ""  # global variable to get the type of device (ev or se)
 is_charging = False  # global variable for maintain the charging status
@@ -33,7 +35,7 @@ def processLine(line, verbose):
     # catch start of waiting
     if WAITING_START_COMMAND in line and device_type == "se":
         print("************* START WAITING **************")
-        if RASPBERRY: GPIO.output(WAITING_LED_GPIO_PIN, GPIO.HIGH)
+        if RASPBERRY: GPIO.output(SE_READY_LED_GPIO_PIN, GPIO.HIGH)
 
     # catch start of charging
     if not is_charging and START_COMMAND in line:
@@ -102,15 +104,19 @@ def exit_handler():
     """
     if is_charging:
         print("************* FORCED EXIT: STOP CHARGING **************")
-        if RASPBERRY:  # if error, the led blinks and the stops
+        if RASPBERRY:  # if error, the LED blinks and then stops
             GPIO.output(CHARGING_LED_GPIO_PIN, GPIO.LOW)
-            time.sleep(1)
+            time.sleep(.8)
             GPIO.output(CHARGING_LED_GPIO_PIN, GPIO.HIGH)
-            time.sleep(1)
+            time.sleep(.8)
+            GPIO.output(CHARGING_LED_GPIO_PIN, GPIO.LOW)
+            time.sleep(.8)
+            GPIO.output(CHARGING_LED_GPIO_PIN, GPIO.HIGH)
+            time.sleep(.8)
             GPIO.output(CHARGING_LED_GPIO_PIN, GPIO.LOW)
     if device_type == "se": print("************* STOP WAITING **************")
     if RASPBERRY:  # clean GPIO if rpi is used
-        GPIO.output(WAITING_LED_GPIO_PIN, GPIO.LOW)
+        GPIO.output(SE_READY_LED_GPIO_PIN, GPIO.LOW)
         GPIO.cleanup()
 
 
