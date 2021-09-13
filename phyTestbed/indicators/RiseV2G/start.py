@@ -28,7 +28,7 @@ device_type = ""  # global variable to get the type of device (ev or se)
 is_charging = False  # global variable for maintain the charging status
 
 def processLine(line, verbose):
-    global is_charging
+    global is_charging, device_type
     if verbose:
         print(line.decode('utf-8'), end="", flush=True)
 
@@ -102,6 +102,7 @@ def exit_handler():
     """
     Handle a premature (i.e., CTRL+C) exit
     """
+    global device_type
     if is_charging:
         print("************* FORCED EXIT: STOP CHARGING **************")
         if RASPBERRY:  # if error, the LED blinks and then stops
