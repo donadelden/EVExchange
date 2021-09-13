@@ -8,7 +8,6 @@ import argparse
 import asyncio
 import atexit
 import time
-import sys
 
 START_COMMAND = b"ChargingStatusRes"  # this is the command that it is used to start the charging
 STOP_COMMAND = b"SessionStopRes"  # this for stopping
@@ -126,7 +125,6 @@ atexit.register(exit_handler)
 
 
 if __name__ == '__main__':
-    global device_type
 
     parser = argparse.ArgumentParser(description='Wrapper for starting EV or SE.')
     parser.add_argument('type', type=str, choices=["ev", "se"],
