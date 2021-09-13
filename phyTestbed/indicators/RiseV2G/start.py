@@ -105,7 +105,6 @@ def exit_handler():
     if is_charging:
         print("************* FORCED EXIT: STOP CHARGING **************")
         if RASPBERRY:  # if error, the LED blinks and then stops
-            GPIO.setmode(GPIO.BCM)
             GPIO.output(CHARGING_LED_GPIO_PIN, GPIO.LOW)
             time.sleep(.8)
             GPIO.output(CHARGING_LED_GPIO_PIN, GPIO.HIGH)
