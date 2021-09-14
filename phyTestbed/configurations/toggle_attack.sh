@@ -31,7 +31,7 @@ else
     # check if attack not active, and then activate it
     if [[ "$test" == *"legBridge"* ]];
     then
-      if [ "$#" -ne 1 ]; then
+      if [ "$#" -ne 2 ]; then
         echo "Usage: start_attack.sh <OTHER_DEV_IP> <DEV_NUMBER> (1 or 2)" >&2
         echo "Remember to use the IPs of the wireless interface (wlan0)" >&2
         exit 1
