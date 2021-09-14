@@ -64,8 +64,8 @@ else
       # setup bridge between eth and the vxlan
       ip link add name ethToVxlan1 type bridge
       ip link set ethToVxlan1 up
-      ip link set eth0 master ethToVxlan1
-      ip link set vxlan0 master ethToVxlan1
+      ip link set eth1 master ethToVxlan1
+      ip link set vxlan1 master ethToVxlan1
       echo "Done, attack is setted up correctly."
     fi
   fi
