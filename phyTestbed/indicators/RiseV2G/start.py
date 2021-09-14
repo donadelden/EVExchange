@@ -11,7 +11,7 @@ import time
 
 START_COMMAND = b"ChargingStatusRes"  # this is the command that it is used to start the charging
 STOP_COMMAND = b"SessionStopRes"  # this for stopping
-WAITING_START_COMMAND = b"TCPServer: Waiting for new TCP client connection"
+WAITING_START_COMMAND = b"TCPServer: TCP server initialized at link-local address"
 RASPBERRY = True  # if you are working on a Raspberry you can set this parameters to trigger a LED
 if RASPBERRY:
     import RPi.GPIO as GPIO
