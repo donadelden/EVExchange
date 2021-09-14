@@ -32,7 +32,7 @@ else
     if [[ "$test" == *"legBridge"* ]];
     then
       if [ "$#" -ne 1 ]; then
-        echo "Usage: start_attack.sh OTHER_DEV_IP" >&2
+        echo "Usage: start_attack.sh <OTHER_DEV_IP> <DEV_NUMBER> (1 or 2)" >&2
         echo "Remember to use the IPs of the wireless interface (wlan0)" >&2
         exit 1
       fi
@@ -53,7 +53,13 @@ else
       ip link add name ethToVxlan0 type bridge
       ip link set ethToVxlan0 up
       ip link set eth0 master ethToVxlan0
-      ip link set vxlan0 master ethToVxlan0
+      if [ "$2" -e "1" ]; then
+        echo "Device 1: connecting eth0 to vxlan1..."
+        ip link set vxlan1 master ethToVxlan0
+      else
+        echo "Device 2: connecting eth0 to vxlan0..."
+        ip link set vxlan0 master ethToVxlan0
+      fi
 
       echo "Activating vxlan1 and setting up bridge to it..."
 
@@ -65,7 +71,13 @@ else
       ip link add name ethToVxlan1 type bridge
       ip link set ethToVxlan1 up
       ip link set eth1 master ethToVxlan1
-      ip link set vxlan1 master ethToVxlan1
+      if [ "$2" -e "1" ]; then
+        echo "Device 1: connecting eth1 to vxlan0..."
+        ip link set vxlan0 master ethToVxlan1
+      else
+        echo "Device 2: connecting eth1 to vxlan1..."
+        ip link set vxlan1 master ethToVxlan1
+      fi
       echo "Done, attack is setted up correctly."
     fi
   fi
