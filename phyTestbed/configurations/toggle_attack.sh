@@ -40,8 +40,6 @@ else
       echo 'Removing legitimate bridge...'
       ip link del legBridge
 
-      echo "Activating vxlan0 and setting up bridge to it..."
-
       MY_IP=`ip addr show wlan0 | awk  '/inet /{print $2}' | awk -F/ '{print $1}'`
       OTHER_DEV_IP=$1
 
@@ -49,10 +47,21 @@ else
       ip link add vxlan0 type vxlan id 100 local "$MY_IP" remote "$OTHER_DEV_IP" dev wlan0 dstport 4788
       ip link set vxlan0 up
 
+      # set up the new interface for the tunnel
+      ip link add vxlan1 type vxlan id 100 local "$MY_IP" remote "$OTHER_DEV_IP" dev wlan0 dstport 4789
+      ip link set vxlan1 up
+
       # setup bridge between eth and the vxlan
       ip link add name ethToVxlan0 type bridge
       ip link set ethToVxlan0 up
       ip link set eth0 master ethToVxlan0
+
+      # setup bridge between eth and the vxlan
+      ip link add name ethToVxlan1 type bridge
+      ip link set ethToVxlan1 up
+      ip link set eth1 master ethToVxlan1
+
+      echo "Activating vxlan0 and setting up bridge to it..."
       if [ "$2" == "1" ]; then
         echo "Device 1: connecting eth0 to vxlan1..."
         ip link set vxlan1 master ethToVxlan0
@@ -62,15 +71,6 @@ else
       fi
 
       echo "Activating vxlan1 and setting up bridge to it..."
-
-      # set up the new interface for the tunnel
-      ip link add vxlan1 type vxlan id 100 local "$MY_IP" remote "$OTHER_DEV_IP" dev wlan0 dstport 4789
-      ip link set vxlan1 up
-
-      # setup bridge between eth and the vxlan
-      ip link add name ethToVxlan1 type bridge
-      ip link set ethToVxlan1 up
-      ip link set eth1 master ethToVxlan1
       if [ "$2" == "1" ]; then
         echo "Device 1: connecting eth1 to vxlan0..."
         ip link set vxlan0 master ethToVxlan1
