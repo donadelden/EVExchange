@@ -45,7 +45,9 @@ def processLine(line, verbose):
     elif is_charging and STOP_COMMAND in line:
         is_charging = False
         print("************* STOP CHARGING **************")
-        if RASPBERRY: GPIO.output(CHARGING_LED_GPIO_PIN, GPIO.LOW)
+        if RASPBERRY:
+            time.sleep(30)
+            GPIO.output(CHARGING_LED_GPIO_PIN, GPIO.LOW)
 
 
 def processErrorLine(line, verbose):
@@ -117,6 +119,7 @@ def exit_handler():
     if device_type == "se": print("************* STOP WAITING **************")
     if RASPBERRY:  # clean GPIO if rpi is used
         if device_type == "se": GPIO.output(SE_READY_LED_GPIO_PIN, GPIO.LOW)
+        GPIO.output(CHARGING_LED_GPIO_PIN, GPIO.LOW)
         GPIO.cleanup()
 
 
