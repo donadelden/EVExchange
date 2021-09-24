@@ -17,11 +17,14 @@ for _ in range(0, ITERATIONS):
     ip = "fe80::200:ff:fe00:22%ev1-eth0"  # change this when changing between hosts
     # ip = "fe80::200:ff:fe00:22%ev2-eth0"  # for mitm but not attack
     port = 5005
-
+	
+    # get socket info
+    address = [addr for addr in socket.getaddrinfo("::", None) if socket.AF_INET6 == addr[0]]
+    	
     # Create socket for server
     s = socket.socket(socket.AF_INET6, socket.SOCK_DGRAM, 0)
-    address = ("::", port, 0, 2)
-    s.bind(address)
+    #address = ("::", port, 0, 2)
+    s.bind(address[0][-1])
     print("Starting...")
     total_start = time.time()
     deltas = []
