@@ -19,9 +19,6 @@ if RASPBERRY:
     # See here: https://www.theengineeringprojects.com/wp-content/uploads/2021/03/raspberry-pi-4.png
     CHARGING_LED_GPIO_PIN = 26  # pin for Yellow (SE) and Green (EV) LEDs
     SE_READY_LED_GPIO_PIN = 19  # pin for Blue LED on SE
-    GPIO.setmode(GPIO.BCM)
-    GPIO.setup(CHARGING_LED_GPIO_PIN, GPIO.OUT)
-    GPIO.setup(SE_READY_LED_GPIO_PIN, GPIO.OUT)
 
 device_type = ""  # global variable to get the type of device (ev or se)
 is_charging = False  # global variable for maintain the charging status
@@ -45,7 +42,7 @@ def processLine(line, verbose):
     elif is_charging and STOP_COMMAND in line:
         is_charging = False
         if RASPBERRY:
-            time.sleep(30)
+            time.sleep(10)
             GPIO.output(CHARGING_LED_GPIO_PIN, GPIO.LOW)
         print("************* STOP CHARGING **************")
 
@@ -140,6 +137,11 @@ if __name__ == '__main__':
     device_type = args.type
 
     COMMAND = f"java -jar ./rise-v2g-{device_type}cc-1.2.6.jar"
+
+    if RASPBERRY:
+        GPIO.setmode(GPIO.BCM)
+        GPIO.setup(CHARGING_LED_GPIO_PIN, GPIO.OUT)
+        GPIO.setup(SE_READY_LED_GPIO_PIN, GPIO.OUT)
 
     execute(
         COMMAND.split(),
