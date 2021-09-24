@@ -44,11 +44,10 @@ def processLine(line, verbose):
     # catch stop charging
     elif is_charging and STOP_COMMAND in line:
         is_charging = False
-        print("************* STOP CHARGING **************")
         if RASPBERRY:
             time.sleep(30)
             GPIO.output(CHARGING_LED_GPIO_PIN, GPIO.LOW)
-
+        print("************* STOP CHARGING **************")
 
 def processErrorLine(line, verbose):
     global is_charging
