@@ -6,6 +6,7 @@ import string
 import os.path
 import sys
 
+
 def get_random_string(length):
     letters = string.ascii_letters + string.digits
     return ''.join(random.choice(letters) for _ in range(length))
@@ -14,17 +15,25 @@ def get_random_string(length):
 ITERATIONS = 1000
 
 for _ in range(0, ITERATIONS):
-    ip = "fe80::200:ff:fe00:22%ev1-eth0"  # change this when changing between hosts
-    # ip = "fe80::200:ff:fe00:22%ev2-eth0"  # for mitm but not attack
+
     port = 5005
-	
+
     # get socket info
     address = [addr for addr in socket.getaddrinfo("::", None) if socket.AF_INET6 == addr[0]]
-    	
+
     # Create socket for server
     s = socket.socket(socket.AF_INET6, socket.SOCK_DGRAM, 0)
-    #address = ("::", port, 0, 2)
     s.bind(address[0][-1])
+    print("Sending hello message...")
+
+    s.sendto(bytes("Ehy! I wanna start DB protocol! Are you up, SE?", "utf-8"), ("ff02::1", port, 2, 0))
+
+    print("Waiting for response...")
+    data = ""
+    while data != b"Ok! Here I am!":
+        data, addr = s.recvfrom(1024)
+
+    print("Got the address!")
     print("Starting...")
     total_start = time.time()
     deltas = []
@@ -38,17 +47,17 @@ for _ in range(0, ITERATIONS):
     # Let's send data through UDP protocol
     for i in range(0, TRIES):
         # retrieve the data to be sent
-        to_be_sent = data_to_be_sent[i*DATA_SIZE:(i+1)*DATA_SIZE].encode()
+        to_be_sent = data_to_be_sent[i * DATA_SIZE:(i + 1) * DATA_SIZE].encode()
 
         # rapid exchange
         start = time.time()
-        s.sendto(to_be_sent, (ip, port, 0, 2))
+        s.sendto(to_be_sent, addr)
         data, _ = s.recvfrom(4)
         end = time.time()
 
         # create the final string
         s_ev += to_be_sent + data
-        deltas.append(end-start)
+        deltas.append(end - start)
 
     # receive the string and check the correctness
     s_se, _ = s.recvfrom(2024)
@@ -60,12 +69,12 @@ for _ in range(0, ITERATIONS):
     mu = np.mean(deltas[1:-1])
     std = np.std(deltas[1:-1])
     var = np.var(deltas[1:-1])
-    elapsed = time.time()-total_start
+    elapsed = time.time() - total_start
     print(f"t: {elapsed}")
     print(mu)
     print(std)
 
-    BASE_PATH = "results/"
+    BASE_PATH = "results_2/"
     # PROP MODE DIST EXP
     if sys.argv[1] == "LNS":
         filename = BASE_PATH + f"attack-dist{sys.argv[3]}-exp{sys.argv[4]}-var{sys.argv[5]}-{sys.argv[1]}-{sys.argv[2]}.csv"

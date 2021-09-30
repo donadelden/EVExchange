@@ -23,7 +23,15 @@ DATA_SIZE = 1
 count = 0
 # always listening (skip the first delta ;) )
 while True:
+    print("Waiting for hello...")
+    hello_msg = b"Ehy! I wanna start DB protocol! Are you up, SE?"
+    data = ""
+    while data != hello_msg:
+        data, addr = s.recvfrom(1024)
+
+    s.sendto(bytes("Ok! Here I am!", "utf-8"), addr)
     print("####### Receiver is listening #######")
+
     data_to_be_sent = get_random_string(TRIES * DATA_SIZE)
     s_se = b""
 
