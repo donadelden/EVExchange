@@ -27,8 +27,8 @@ def topology(args):
                           position='10,10,0', **kwargs)
     sta2 = net.addStation('sta2', ip6='fe80::2',
                           position='50,10,0', **kwargs)
-    sta3 = net.addStation('sta3', ip6='fe80::3',
-                          position='90,10,0', **kwargs)
+    """sta3 = net.addStation('sta3', ip6='fe80::3',
+                          position='90,10,0', **kwargs)"""
 
     net.setPropagationModel(model="logDistance", exp=4)
 
@@ -46,7 +46,7 @@ def topology(args):
         if proto in protocols:
             kwargs['proto'] = proto
 
-    net.addLink(sta1, cls=adhoc, intf='sta1-wlan0',
+    """net.addLink(sta1, cls=adhoc, intf='sta1-wlan0',
                 ssid='adhocNet', mode='g', channel=5,
                 ht_cap='HT40+', **kwargs)
     net.addLink(sta2, cls=adhoc, intf='sta2-wlan0',
@@ -54,16 +54,16 @@ def topology(args):
                 **kwargs)
     net.addLink(sta3, cls=adhoc, intf='sta3-wlan0',
                 ssid='adhocNet', mode='g', channel=5,
-                ht_cap='HT40+', **kwargs)
+                ht_cap='HT40+', **kwargs)"""
 
     info("*** Starting network\n")
     net.build()
 
-    info("\n*** Addressing...\n")
+    """info("\n*** Addressing...\n")
     if 'proto' not in kwargs:
         sta1.setIP6('2001::1/64', intf="sta1-wlan0")
         sta2.setIP6('2001::2/64', intf="sta2-wlan0")
-        sta3.setIP6('2001::3/64', intf="sta3-wlan0")
+        sta3.setIP6('2001::3/64', intf="sta3-wlan0")"""
 
     info("*** Running CLI\n")
     CLI(net)

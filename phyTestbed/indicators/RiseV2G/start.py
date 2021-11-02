@@ -26,6 +26,7 @@ if RASPBERRY:
 device_type = ""  # global variable to get the type of device (ev or se)
 is_charging = False  # global variable for maintain the charging status
 
+
 def processLine(line, verbose):
     global is_charging, device_type
     if verbose:
@@ -48,6 +49,7 @@ def processLine(line, verbose):
             time.sleep(10)
             GPIO.output(CHARGING_LED_GPIO_PIN, GPIO.LOW)
         print("************* STOP CHARGING **************")
+
 
 def processErrorLine(line, verbose):
     global is_charging
@@ -147,5 +149,5 @@ if __name__ == '__main__':
         lambda x: processErrorLine(x, verbose=verbose),
     )
 
-    #if RASPBERRY:  # clean GPIO if rpi is used
+    #if RASPBERRY:  # clean GPIO if rpi is used (it will be done by atexit handler anyway)
     #    GPIO.cleanup()

@@ -74,7 +74,7 @@ for _ in range(0, ITERATIONS):
     print(mu)
     print(std)
 
-    BASE_PATH = "results_2/"
+    BASE_PATH = "results/"
     # PROP MODE DIST EXP
     if sys.argv[1] == "LNS":
         filename = BASE_PATH + f"attack-dist{sys.argv[3]}-exp{sys.argv[4]}-var{sys.argv[5]}-{sys.argv[1]}-{sys.argv[2]}.csv"
