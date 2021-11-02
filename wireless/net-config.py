@@ -34,20 +34,20 @@ class Mininet_wifi_ext(Mininet_wifi):
 
 		self.terms.append(self.hosts[1].startCharge())
 		self.terms.append(self.hosts[3].startCharge())
-		sleep(5)
+		sleep(10)
 
 		self.terms.append(self.hosts[0].charge(True))
-		sleep(7)
+		sleep(10)
 
 		self.terms.append(self.hosts[2].charge(True))
-		sleep(7)
+		sleep(10)
 
 
 def topology():
 	"Create a network."
 	# TEST PARAMETERS
 	MODE = "ac"  # "ac" "g"
-	DISTANCE = 10  # 2 10
+	DISTANCE = 2  # 2 10
 	PROP = "LNS"  # "LDPL" "LNS"
 	EXP = 4 # 2 - 4
 	VAR = 2
@@ -150,14 +150,14 @@ def topology():
 			xterm = "; bash - i"
 		else:
 			xterm = ""
-		se2_cmd = "cd ../countermeasure/distance_bounding/ && python3 receiver.py"
-		ev1_cmd = f"cd ../countermeasure/distance_bounding/ && python3 sender.py {PROP} {MODE} {DISTANCE} {EXP} {VAR}"
+		se2_cmd = "cd ../countermeasure/distance_bounding/ && python3 receiver_se.py"
+		ev1_cmd = f"cd ../countermeasure/distance_bounding/ && python3 sender.py {PROP} {MODE}-2 {DISTANCE} {EXP} {VAR}"
 		sleep(1)
 		makeTerm(se2, cmd=f"bash -i -c '{se2_cmd}{xterm}'")
 		sleep(0.2)
 		makeTerm(ev1, cmd=f"bash -i -c '{ev1_cmd}{xterm}'")
 
-	#run_measurements()
+	# run_measurements()
 
 	info("*** Running CLI\n")
 	CLI(net)
